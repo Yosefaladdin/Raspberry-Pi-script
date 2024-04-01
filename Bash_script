@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Update and upgrade the system
+echo "Updating and upgrading the system..."
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Install and configure a firewall (ufw)
+echo "Installing and configuring the Uncomplicated Firewall (ufw)..."
+sudo apt-get install ufw -y
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+# Allow SSH access 
+sudo ufw allow 22
+# Block VNC port 5900
+sudo ufw deny 5900
+# Enable the firewall
+sudo ufw enable
+
+# Configure SSH for key-based authentication and disable root login
+echo "Configuring SSH..."
+sudo sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+sudo systemctl reload sshd
+
+# Update Raspberry Pi firmware
+echo "Updating Raspberry Pi firmware..."
+sudo apt-get install rpi-update -y
+sudo rpi-update
+
+# Change the default user password
+echo "It's time to change the default user password."
+passwd pi
+
+echo "Security configuration script has completed."
